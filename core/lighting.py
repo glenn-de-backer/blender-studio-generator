@@ -256,9 +256,10 @@ def reset_lighting_defaults(studio_object):
     try:
         for prop_name in property_names:
             prop_def = settings.bl_rna.properties[prop_name]
+            is_array = getattr(prop_def, 'is_array', False)
             default_value = (
                 tuple(prop_def.default_array)
-                if prop_def.is_array
+                if is_array
                 else prop_def.default
             )
             setattr(settings, prop_name, default_value)
