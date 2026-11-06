@@ -11,7 +11,7 @@ from bpy.props import (
 )
 
 from .constants import PRESETS
-from .core.lighting import LIGHTING_PRESETS, update_lighting
+from .core.lighting import LIGHTING_PRESETS, RIM_POSITIONS, update_lighting
 from .core.mesh_builder import rebuild
 
 
@@ -191,7 +191,7 @@ class StudioSettings(bpy.types.PropertyGroup):
     )
 
     # ---------------------------------------------------------
-    # 3. Individual Light Controls (Power, Color, Enable)
+    # 3. Individual Light Controls (Power, Color, Enable, Position)
     # ---------------------------------------------------------
     # Key Light
     key_light_power: FloatProperty(
@@ -246,6 +246,14 @@ class StudioSettings(bpy.types.PropertyGroup):
     )
 
     # Rim Light
+    rim_position: EnumProperty(
+        name='Rim Position',
+        description='Horizontal placement of the rim / backlight',
+        items=RIM_POSITIONS,
+        default='BACK_RIGHT',
+        update=update_light_settings,
+        options=set(),
+    )
     rim_light_power: FloatProperty(
         name='Rim Power (W)',
         default=750.0,
@@ -326,7 +334,6 @@ class StudioSettings(bpy.types.PropertyGroup):
     # ---------------------------------------------------------
     # 4. UI Accordion & Disclosure States
     # ---------------------------------------------------------
-    # UI-only toggle states; opening a section never triggers rig rebuilds
     key_light_expanded: BoolProperty(
         name='Show Key Settings',
         default=False,

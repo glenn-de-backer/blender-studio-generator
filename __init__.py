@@ -17,10 +17,10 @@ from .ui import STUDIO_PT_panel, menu
 # Add-on Metadata
 # -------------------------------------------------------------
 bl_info = {
-    'name': 'Studio Generator',
+    'name': 'Simple Studio Generator',
     'author': 'Glenn De Backer',
-    'version': (1, 0, 0),
-    'blender': (5, 2, 0),
+    'version': (1, 1, 0),
+    'blender': (5, 0, 0),
     'category': 'Add Mesh',
     'location': 'View3D > Sidebar > Studio',
 }

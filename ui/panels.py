@@ -146,10 +146,15 @@ class STUDIO_PT_panel(bpy.types.Panel):
                 )
                 light_header.prop(settings, LIGHT_ENABLED_PROPERTIES[role], text='')
 
-                # Expanded light parameters (power and tint)
+                # Expanded light parameters (power, tint, position)
                 if is_expanded:
                     light_controls = light_box.column()
                     light_controls.enabled = getattr(settings, LIGHT_ENABLED_PROPERTIES[role])
+
+                    # Position selector for the Rim light
+                    if role == 'Rim':
+                        light_controls.prop(settings, 'rim_position', text='Position')
+
                     light_controls.prop(
                         settings,
                         LIGHT_POWER_PROPERTIES[role],

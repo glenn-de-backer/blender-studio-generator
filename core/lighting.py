@@ -12,7 +12,6 @@ from mathutils import Matrix, Vector
 # -------------------------------------------------------------
 # Global Mappings and Role Definitions
 # -------------------------------------------------------------
-# Shared by the UI and updater to keep role/property mappings consistent.
 LIGHT_COLOR_PROPERTIES = {
     'Key': 'key_light_color',
     'Fill': 'fill_light_color',
@@ -48,6 +47,18 @@ LIGHTING_PRESETS = [
     ('THREE_POINT', 'Three Point', 'Key, fill and rear rim lights'),
     ('OVERHEAD', 'Overhead', 'Top softbox with a gentle front fill'),
 ]
+
+RIM_POSITIONS = [
+    ('BACK_LEFT', 'Back Left', 'Position rim light behind and to the left'),
+    ('BACK_CENTER', 'Back Center', 'Position rim light directly behind the subject'),
+    ('BACK_RIGHT', 'Back Right', 'Position rim light behind and to the right'),
+]
+
+RIM_POSITION_COORDINATES = {
+    'BACK_LEFT': (-0.22, 0.27, 0.82),
+    'BACK_CENTER': (0.0, 0.35, 0.82),
+    'BACK_RIGHT': (0.22, 0.27, 0.82),
+}
 
 
 # -------------------------------------------------------------
@@ -128,8 +139,6 @@ def update_lighting(studio_object):
         return
 
     # 3. Setup spatial dimensions and target aiming vector
-    # Fractional coordinates fit light centers comfortably inside walls and ceiling.
-    # Spread scales horizontal offsets while keeping the Z positions anchored.
     spread = settings.light_distance
     width = settings.width
     depth = settings.depth
@@ -137,6 +146,9 @@ def update_lighting(studio_object):
 
     # Lights orient toward a studio-local focus point without needing dedicated empty objects
     aim_position = Vector((0.0, 0.0, min(1.0, height * 0.65)))
+
+    # Lookup dynamic rim position coordinates based on user selection
+    rim_coords = RIM_POSITION_COORDINATES.get(settings.rim_position, (0.22, 0.27, 0.82))
 
     # Preset templates: (role, (x_factor, y_factor, z_factor), power_ratio, size_ratio)
     key_preset = ('Key', (-0.28, -0.28, 0.78), 1.0, 1.0)
@@ -150,7 +162,7 @@ def update_lighting(studio_object):
         'THREE_POINT': [
             key_preset,
             fill_preset,
-            ('Rim', (0.22, 0.27, 0.82), 0.75, 0.65),
+            ('Rim', rim_coords, 0.75, 0.65),
         ],
         'OVERHEAD': [
             ('Top', (0.0, 0.0, 0.88), 1.0, 1.3),
@@ -225,12 +237,12 @@ def reset_lighting_defaults(studio_object):
     """Restore all lighting RNA properties to factory defaults and rebuild the rig."""
     settings = studio_object.studio_settings
 
-    # Compile all lighting property names that need to be reset
     property_names = [
         'light_power',
         'light_size',
         'light_distance',
         'light_color',
+        'rim_position',
     ]
     property_names.extend(LIGHT_COLOR_PROPERTIES.values())
     property_names.extend(LIGHT_POWER_PROPERTIES.values())
@@ -240,7 +252,6 @@ def reset_lighting_defaults(studio_object):
         for prop_name in LIGHT_COLOR_PROPERTIES.values()
     ])
 
-    # Suppress intermediate update triggers during batch property assignment
     settings.initializing_light_power = True
     try:
         for prop_name in property_names:
@@ -256,5 +267,4 @@ def reset_lighting_defaults(studio_object):
     finally:
         settings.initializing_light_power = False
 
-    # Perform a single authoritative rig update
     update_lighting(studio_object)

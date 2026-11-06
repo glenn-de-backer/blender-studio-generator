@@ -1,10 +1,10 @@
 schema_version = "1.0.0"
-id = "studio_generator"
-version = "1.0.0"
-name = "Studio Generator"
+id = "simple_studio_generator"
+version = "1.1.0"
+name = "Simple Studio Generator"
 tagline = "Create five adjustable studio backdrops with rounded transitions"
 maintainer = "Glenn De Backer"
 type = "add-on"
 tags = ["Add Mesh", "Modeling"]
-blender_version_min = "4.3.0"
+blender_version_min = "5.0.0"
 license = ["SPDX:GPL-3.0-or-later"]
